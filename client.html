@@ -35,31 +35,31 @@
             }
 
             function movePlayer(command) {
-                console.log(`Moving ${command.playerId} with ${command.keyPressed}`)
+                console.log(`game.movePlayer - Moving ${command.playerId} with ${command.keyPressed}`)
                 const player = state.players[command.playerId]
 
-                const keyActionConfig = {
-                    'ArrowUp': function () {
+                const acceptedMoves = {
+                    ArrowUp(player) {
                         if (player.y - 1 >= 0)
                             player.y -= 1
                     },
-                    'ArrowDown': function () {
+                    ArrowDown(player) {
                         if (player.y + 1 < screen.height)
                             player.y += 1
                     },
-                    'ArrowLeft': function () {
+                    ArrowLeft(player) {
                         if (player.x - 1 >= 0)
                             player.x -= 1
                     },
-                    'ArrowRight': function () {
+                    ArrowRight(player) {
                         if (player.x + 1 < screen.width)
                             player.x += 1
                     }
                 }
 
-                const keyAction = keyActionConfig[command.keyPressed]
+                const moveFunction = acceptedMoves[command.keyPressed]
 
-                if (keyAction) keyAction()
+                if (moveFunction) moveFunction(player)
             }
 
             return { 
@@ -78,7 +78,7 @@
             }
 
             function notifyAll(command) {
-                console.log(`Notifying ${state.observers.length} observers`)
+                console.log(`keyboardListener.notifyAll - Notifying ${state.observers.length} observers`)
 
                 state.observers.forEach(observerFunction => {
                     observerFunction(command)
