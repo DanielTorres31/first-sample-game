@@ -68,20 +68,42 @@
             }
         }
 
-        const game = createGame()
-
-        document.addEventListener('keydown', handleKeydown)
-
-        function handleKeydown(event) {
-            const keyPressed = event.key
-
-            const command = {
-                playerId: 'player1',
-                keyPressed
+        function createKeyboardListener() {
+            state = {
+                observers: []
             }
 
-            game.movePlayer(command)
+            function subscribe(observerFunction) {
+                state.observers.push(observerFunction)
+            }
+
+            function notifyAll(command) {
+                console.log(`Notifying ${state.observers.length} observers`)
+
+                state.observers.forEach(observerFunction => {
+                    observerFunction(command)
+                })
+            }
+
+            document.addEventListener('keydown', handleKeydown)
+
+            function handleKeydown(event) {
+                const keyPressed = event.key
+
+                const command = {
+                    playerId: 'player1',
+                    keyPressed
+                }
+
+                notifyAll(command)
+            }
+
+            return { subscribe }
         }
+
+        const game = createGame()
+        const keyboardListener = createKeyboardListener()
+        keyboardListener.subscribe(game.movePlayer)
 
         renderScreen()
 
